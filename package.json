@@ -12,7 +12,8 @@
     "prettier:check": "prettier --check src",
     "check": "npm run lint:check && npm run prettier:check",
     "format": "npm run lint && npm run prettier",
-    "clean": "rm -rf .next node_modules && npm cache clean --force"
+    "clean": "rm -rf .next node_modules && npm cache clean --force",
+    "prepare": "husky"
   },
   "husky": {
     "hooks": {
