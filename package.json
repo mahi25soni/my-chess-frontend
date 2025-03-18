@@ -23,7 +23,6 @@
     "dotenv": "^16.4.7",
     "gitignore": "^0.7.0",
     "next": "15.2.3",
-    "postcss": "^8.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -37,6 +36,7 @@
     "eslint-config-next": "15.2.3",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "tailwindcss": "^4.0.14",
     "typescript": "^5"
