@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run lint && next dev",
+    "dev": "next dev",
     "build": "npm run check && next build",
     "start": "next start",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
