@@ -5,5 +5,5 @@ type Props = {
 };
 
 export default function PaddingWrapper({ children }: Props) {
-  return <div className="px-8">{children}</div>;
+  return <div className="p-8">{children}</div>;
 }
