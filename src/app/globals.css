@@ -1,4 +1,25 @@
 @import "tailwindcss";
 
+@theme {
+  /* Colors */
+  --color-blue: #2563eb;
+  --color-green: #166534;
+  --color-light-green: #dcfce7;
+  --color-dark-red: #991b1b;
+  --color-dark-white: #f3f4f6;
+  --color-off-white: #4b5563;
+
+  /* Border Colors */
+  --color-border-basic: #e5e7eb;
+
+  /* Border Radius */
+  --radius-yes: 2rem;
+}
+
 @layer base {
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
 }
