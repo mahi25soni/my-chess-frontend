@@ -1,4 +1,5 @@
 module.exports = {
+  parser: "@typescript-eslint/parser",
   env: {
     browser: true,
     es2021: true,
@@ -10,6 +11,7 @@ module.exports = {
     "plugin:prettier/recommended",
     "plugin:jsx-a11y/recommended", // Accessibility rules
     "plugin:@next/next/recommended", // Next.js-specific rules
+    "plugin:@typescript-eslint/recommended", // TypeScript ESLint rules
   ],
   plugins: ["react", "prettier", "tailwindcss", "jsx-a11y"],
   rules: {
@@ -19,5 +21,6 @@ module.exports = {
     "no-undef": "error",
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/no-onchange": "warn",
+    "@typescript-eslint/no-explicit-any": "off",
   },
 };

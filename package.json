@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run prettier && npm run lint && next dev",
+    "dev": "npm run lint && next dev",
     "build": "npm run check && next build",
     "start": "next start",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
@@ -11,13 +11,13 @@
     "prettier": "prettier --write src",
     "prettier:check": "prettier --check src",
     "check": "npm run lint:check && npm run prettier:check",
-    "format": "npm run lint && npm run prettier",
+    "format": "npm run lint:check && npm run prettier",
     "clean": "rm -rf .next node_modules && npm cache clean --force",
     "prepare": "husky"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format && git add ."
+      "pre-commit": "npm run format && git diff --name-only | xargs git add"
     }
   },
   "dependencies": {
@@ -33,6 +33,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
     "eslint": "^9.22.0",
     "eslint-config-next": "15.2.3",
     "eslint-config-prettier": "^10.1.1",
