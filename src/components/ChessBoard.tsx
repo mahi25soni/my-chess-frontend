@@ -12,13 +12,29 @@ const ChessBoard = (props: Props) => {
 
   const makeAMove = (moveData: { from: string; to: string; promotion: string }) => {
     const gameCopy = new Chess(game.fen()); // Create a new instance with the current game state
-    console.log("The game copy is ", gameCopy);
     const result = gameCopy.move(moveData);
 
-    if (result) {
-      setGame(gameCopy); // Update state with the new game instance
+    if (!result) return null; // Invalid move, return early
+
+    // **Check game-ending conditions AFTER updating the game**
+    if (gameCopy.isCheckmate()) {
+      console.log("Checkmate! Game over.");
+      setTimeout(() => alert("Checkmate! Game over."), 100);
+    } else if (gameCopy.isStalemate()) {
+      console.log("Stalemate! Game is a draw.");
+      setTimeout(() => alert("Stalemate! Game is a draw."), 100);
+    } else if (gameCopy.isInsufficientMaterial()) {
+      console.log("Draw by insufficient material.");
+      setTimeout(() => alert("Draw by insufficient material."), 100);
+    } else if (gameCopy.isThreefoldRepetition()) {
+      setTimeout(() => alert("Draw by threefold repetition."), 100);
+    } else if (gameCopy.isDraw()) {
+      setTimeout(() => alert("Draw!"), 100);
+    } else if (gameCopy.inCheck()) {
+      console.log("Check! Defend your king.");
     }
 
+    setGame(gameCopy); // Update state with the new game instance
     return result;
   };
 
@@ -33,7 +49,20 @@ const ChessBoard = (props: Props) => {
       promotion: "q",
     });
 
-    console.log("The move is ", move);
+    if (game.isCheckmate()) {
+      alert("Checkmate! game over.");
+    } else if (game.isStalemate()) {
+      alert("Stalemate! game is a draw.");
+    } else if (game.isInsufficientMaterial()) {
+      alert("Draw by insufficient material.");
+    } else if (game.isThreefoldRepetition()) {
+      alert("Draw by threefold repetition.");
+    } else if (game.isDrawByFiftyMoves()) {
+      alert("Draw by 50-move rule.");
+    } else if (game.inCheck()) {
+      console.log("Check! Defend your king.");
+    }
+
     if (move === null) {
       return false;
     } else {
@@ -45,8 +74,6 @@ const ChessBoard = (props: Props) => {
 
   const handleOnPieceClick = (piece: any, square: any) => {
     const allMoves = game.moves({ square, verbose: true });
-    console.log("The moves are ", allMoves);
-
     const newSquares = {};
     allMoves.map((move) => {
       newSquares[move.to] = {
@@ -60,8 +87,6 @@ const ChessBoard = (props: Props) => {
     newSquares[square] = {
       background: "rgba(255, 255, 0, 0.4)",
     };
-
-    console.log("The new squares are ", newSquares);
 
     setCurrentSelectedPiece(square);
     setOptionSquare(newSquares);
@@ -84,7 +109,6 @@ const ChessBoard = (props: Props) => {
 
   const handleOnPieceDragBegin = (piece: any, sourceSquare: any) => {
     const allMoves = game.moves({ square: sourceSquare, verbose: true });
-    console.log("The moves are ", allMoves);
 
     const newSquares = {};
     allMoves.map((move) => {
