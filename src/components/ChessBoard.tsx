@@ -43,15 +43,12 @@ const ChessBoard = (props: Props) => {
     }
   };
 
-  const handlingGameEndings = (gameCopy: any) => {
+  const handlingGameEndings = (color: any, gameCopy: any) => {
     if (gameCopy.isCheckmate()) {
-      alert("Checkmate! Game over.");
-      setTimeout(() => alert("Checkmate! Game over."), 1500);
+      setTimeout(() => alert(`${color === "w" ? "White wins" : "Black wins"}`), 1500);
     } else if (gameCopy.isStalemate()) {
-      alert("Stalemate! Game is a draw.");
-      setTimeout(() => alert("Stalemate! Game is a draw."), 1500);
+      setTimeout(() => alert(`${color === "w" ? "White wins" : "Black wins"}`), 1500);
     } else if (gameCopy.isInsufficientMaterial()) {
-      alert("Draw by insufficient material.");
       setTimeout(() => alert("Draw by insufficient material."), 1500);
     } else if (gameCopy.isThreefoldRepetition()) {
       setTimeout(() => alert("Draw by threefold repetition."), 1500);
@@ -110,7 +107,7 @@ const ChessBoard = (props: Props) => {
       });
       setOptionSquare({});
       setCurrentSelectedPiece(null);
-      handlingGameEndings(gameCopy);
+      handlingGameEndings(newMove?.color, gameCopy);
       return true;
     }
     return false;
