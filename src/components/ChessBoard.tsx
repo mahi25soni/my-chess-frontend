@@ -2,13 +2,26 @@
 import React, { useState } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
+import Overlay from "./atoms/Overlay";
 type Props = {};
 
 const ChessBoard = (props: Props) => {
   const [game, setGame] = useState(new Chess());
+
   const [highlightedSquares, setHighlightedSquares] = useState({});
   const [optionSquare, setOptionSquare] = useState({});
   const [currentSelectedPiece, setCurrentSelectedPiece] = useState(null);
+
+  const [matchEnd, setMatchEnd] = useState<boolean>(false);
+  const [winner, setWinner] = useState<string | null>(null);
+
+  const matchRestart = () => {
+    setGame(new Chess());
+    setOptionSquare({});
+    setCurrentSelectedPiece(null);
+    setMatchEnd(false);
+    setWinner(null);
+  };
 
   const makeAMove = (moveData: { from: string; to: string; promotion: string }) => {
     const gameCopy = new Chess(game.fen()); // Create a new instance with the current game state
@@ -45,7 +58,8 @@ const ChessBoard = (props: Props) => {
 
   const handlingGameEndings = (color: any, gameCopy: any) => {
     if (gameCopy.isCheckmate()) {
-      setTimeout(() => alert(`${color === "w" ? "White wins" : "Black wins"}`), 1500);
+      setWinner(color === "w" ? "White" : "Black");
+      setMatchEnd(true);
     } else if (gameCopy.isStalemate()) {
       setTimeout(() => alert(`${color === "w" ? "White wins" : "Black wins"}`), 1500);
     } else if (gameCopy.isInsufficientMaterial()) {
@@ -145,7 +159,27 @@ const ChessBoard = (props: Props) => {
         customSquareStyles={optionSquare}
         onSquareClick={handleSquareClick}
       />
+      {matchEnd && <MatchEndModal winner={winner} matchRestart={matchRestart} />}
     </div>
+  );
+};
+
+const MatchEndModal = ({ winner, matchRestart }: { winner: string; matchRestart: () => void }) => {
+  return (
+    <Overlay onClose={matchRestart}>
+      <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-80 animate-fadeIn">
+        <h1 className="text-3xl font-extrabold text-gray-900">Game Over</h1>
+        <p className="text-lg text-gray-600 mt-2">{winner} wins</p>
+
+        <button
+          className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
+               transition-all duration-200 hover:bg-blue-700 active:scale-95"
+          onClick={matchRestart}
+        >
+          Play Again
+        </button>
+      </div>
+    </Overlay>
   );
 };
 
