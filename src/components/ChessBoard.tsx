@@ -22,7 +22,7 @@ const ChessBoard = (props: Props) => {
     return result;
   };
 
-  const pieceDrop = (from: string, to: string, piece: string) => {
+  const handleOnPieceDrop = (from: string, to: string, piece: string) => {
     const isAlloweSquare = Object.keys(optionSquare).includes(to);
     if (!isAlloweSquare) {
       return false;
@@ -43,24 +43,25 @@ const ChessBoard = (props: Props) => {
     }
   };
 
-  const pieceClick = (piece: any, square: any) => {
+  const handleOnPieceClick = (piece: any, square: any) => {
     const allMoves = game.moves({ square, verbose: true });
     console.log("The moves are ", allMoves);
 
     const newSquares = {};
     allMoves.map((move) => {
       newSquares[move.to] = {
-        background:
-          game.get(move.to) && game.get(move.to).color !== game.get(square).color
-            ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
-            : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
-        borderRadius: "50%",
+        background: move.captured
+          ? "rgba(255, 0, 0, 0.4)" // Capturing move (Red Highlight)
+          : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)", // Normal move
+        borderRadius: move.captured ? "0" : "50%", // Capturing move (Circle Highlight)
       };
       return move;
     });
     newSquares[square] = {
       background: "rgba(255, 255, 0, 0.4)",
     };
+
+    console.log("The new squares are ", newSquares);
 
     setCurrentSelectedPiece(square);
     setOptionSquare(newSquares);
@@ -108,8 +109,8 @@ const ChessBoard = (props: Props) => {
       <Chessboard
         position={game.fen()}
         onPieceDragBegin={handleOnPieceDragBegin}
-        onPieceDrop={pieceDrop}
-        onPieceClick={pieceClick}
+        onPieceDrop={handleOnPieceDrop}
+        onPieceClick={handleOnPieceClick}
         // customSquareStyles={highlightedSquares}
         customSquareStyles={optionSquare}
         onSquareClick={handleSquareClick}
