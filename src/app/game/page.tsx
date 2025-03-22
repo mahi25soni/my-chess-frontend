@@ -9,10 +9,10 @@ export default function page({}: Props) {
   return (
     <PaddingWrapper>
       <div className="grid grid-cols-10 gap-2 h-screen">
-        <div className="col-span-6 border border-blue">
+        <div className="col-span-6 border">
           <ChessBoard />
         </div>
-        <div className="col-span-4 border border-red-500">
+        <div className="col-span-4 border">
           <GameInfo />
         </div>
       </div>
