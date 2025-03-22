@@ -12,30 +12,15 @@ const ChessBoard = (props: Props) => {
 
   const makeAMove = (moveData: { from: string; to: string; promotion: string }) => {
     const gameCopy = new Chess(game.fen()); // Create a new instance with the current game state
-    const result = gameCopy.move(moveData);
+    const newMove = gameCopy.move(moveData);
 
-    if (!result) return null; // Invalid move, return early
+    if (!newMove) return null; // Invalid move, return early
 
     // **Check game-ending conditions AFTER updating the game**
-    if (gameCopy.isCheckmate()) {
-      console.log("Checkmate! Game over.");
-      setTimeout(() => alert("Checkmate! Game over."), 100);
-    } else if (gameCopy.isStalemate()) {
-      console.log("Stalemate! Game is a draw.");
-      setTimeout(() => alert("Stalemate! Game is a draw."), 100);
-    } else if (gameCopy.isInsufficientMaterial()) {
-      console.log("Draw by insufficient material.");
-      setTimeout(() => alert("Draw by insufficient material."), 100);
-    } else if (gameCopy.isThreefoldRepetition()) {
-      setTimeout(() => alert("Draw by threefold repetition."), 100);
-    } else if (gameCopy.isDraw()) {
-      setTimeout(() => alert("Draw!"), 100);
-    } else if (gameCopy.inCheck()) {
-      console.log("Check! Defend your king.");
-    }
 
     setGame(gameCopy); // Update state with the new game instance
-    return result;
+
+    return { newMove, gameCopy };
   };
 
   const handleOnPieceDrop = (from: string, to: string, piece: string) => {
@@ -43,27 +28,13 @@ const ChessBoard = (props: Props) => {
     if (!isAlloweSquare) {
       return false;
     }
-    let move = makeAMove({
+    const { newMove, gameCopy } = makeAMove({
       from,
       to,
       promotion: "q",
     });
 
-    if (game.isCheckmate()) {
-      alert("Checkmate! game over.");
-    } else if (game.isStalemate()) {
-      alert("Stalemate! game is a draw.");
-    } else if (game.isInsufficientMaterial()) {
-      alert("Draw by insufficient material.");
-    } else if (game.isThreefoldRepetition()) {
-      alert("Draw by threefold repetition.");
-    } else if (game.isDrawByFiftyMoves()) {
-      alert("Draw by 50-move rule.");
-    } else if (game.inCheck()) {
-      console.log("Check! Defend your king.");
-    }
-
-    if (move === null) {
+    if (newMove === null) {
       return false;
     } else {
       setOptionSquare({});
@@ -72,6 +43,43 @@ const ChessBoard = (props: Props) => {
     }
   };
 
+  const handlingGameEndings = (gameCopy: any) => {
+    if (gameCopy.isCheckmate()) {
+      alert("Checkmate! Game over.");
+      setTimeout(() => alert("Checkmate! Game over."), 1500);
+    } else if (gameCopy.isStalemate()) {
+      alert("Stalemate! Game is a draw.");
+      setTimeout(() => alert("Stalemate! Game is a draw."), 1500);
+    } else if (gameCopy.isInsufficientMaterial()) {
+      alert("Draw by insufficient material.");
+      setTimeout(() => alert("Draw by insufficient material."), 1500);
+    } else if (gameCopy.isThreefoldRepetition()) {
+      setTimeout(() => alert("Draw by threefold repetition."), 1500);
+    } else if (gameCopy.isDraw()) {
+      setTimeout(() => alert("Draw!"), 1500);
+    } else if (gameCopy.inCheck()) {
+      let kingSquare = null;
+
+      // Loop through all squares to find the checked king
+      for (let file of "abcdefgh") {
+        for (let rank of "12345678") {
+          const square: any = file + rank;
+          const piece = gameCopy.get(square);
+
+          if (piece && piece.type === "k" && piece.color === gameCopy.turn()) {
+            kingSquare = square;
+            break;
+          }
+        }
+      }
+
+      setOptionSquare({
+        [kingSquare]: {
+          background: "rgba(255, 0, 0, 0.3)",
+        },
+      });
+    }
+  };
   const handleOnPieceClick = (piece: any, square: any) => {
     const allMoves = game.moves({ square, verbose: true });
     const newSquares = {};
@@ -95,13 +103,14 @@ const ChessBoard = (props: Props) => {
   const handleSquareClick = (square: any) => {
     const isAlloweSquare = Object.keys(optionSquare).includes(square);
     if (isAlloweSquare) {
-      makeAMove({
+      const { newMove, gameCopy } = makeAMove({
         from: currentSelectedPiece,
         to: square,
         promotion: "q",
       });
       setOptionSquare({});
       setCurrentSelectedPiece(null);
+      handlingGameEndings(gameCopy);
       return true;
     }
     return false;
