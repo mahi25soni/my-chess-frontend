@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import Overlay from "./atoms/Overlay";
+import io from "socket.io-client";
 type Props = {};
 
 const ChessBoard = (props: Props) => {
+  const [socket, setSocket] = useState<any>(null);
   const [game, setGame] = useState(new Chess());
 
   const [highlightedSquares, setHighlightedSquares] = useState({});
@@ -15,6 +17,25 @@ const ChessBoard = (props: Props) => {
   const [matchEnd, setMatchEnd] = useState<boolean>(false);
   const [winner, setWinner] = useState<string | null>(null);
 
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    const typeId = localStorage.getItem("typeId");
+
+    const socket = io("http://localhost:9000", {
+      query: {
+        userId,
+        typeId,
+      },
+    });
+    setSocket(socket);
+
+    socket.on("message", (data: any) => {
+      console.log(data);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   const matchRestart = () => {
     setGame(new Chess());
     setOptionSquare({});
