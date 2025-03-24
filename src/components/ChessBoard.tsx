@@ -4,7 +4,9 @@ import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import Overlay from "./atoms/Overlay";
 import io from "socket.io-client";
-type Props = {};
+type Props = {
+  player: string;
+};
 
 const ChessBoard = (props: Props) => {
   const [socket, setSocket] = useState<any>(null);
@@ -127,6 +129,10 @@ const ChessBoard = (props: Props) => {
     }
   };
   const handleOnPieceClick = (piece: any, square: any) => {
+    if (props.player !== game.turn()) {
+      alert("It's not your turn");
+      return;
+    }
     const allMoves = game.moves({ square, verbose: true });
     const newSquares = {};
     allMoves.map((move) => {
@@ -165,6 +171,10 @@ const ChessBoard = (props: Props) => {
   };
 
   const handleOnPieceDragBegin = (piece: any, sourceSquare: any) => {
+    if (props.player !== game.turn()) {
+      alert("It's not your turn");
+      return;
+    }
     const allMoves = game.moves({ square: sourceSquare, verbose: true });
 
     const newSquares = {};

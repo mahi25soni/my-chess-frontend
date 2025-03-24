@@ -15,7 +15,7 @@ export default function page({}: Props) {
           onClick={() => {
             localStorage.setItem("userId", "100");
             localStorage.setItem("typeId", "300");
-            setPlayer("white");
+            setPlayer("w");
           }}
           className="bg-blue-500 text-white px-4 py-2 rounded w-full"
         >
@@ -25,7 +25,7 @@ export default function page({}: Props) {
           onClick={() => {
             localStorage.setItem("userId", "200");
             localStorage.setItem("typeId", "300");
-            setPlayer("black");
+            setPlayer("b");
           }}
           className="bg-red-500 text-white px-4 py-2 rounded w-full"
         >
@@ -35,12 +35,12 @@ export default function page({}: Props) {
       <div className="grid grid-cols-10 gap-2 h-screen">
         {player && (
           <>
-            <div className="col-span-10 border">
-              <ChessBoard />
+            <div className="col-span-6 border">
+              <ChessBoard player={player} />
             </div>
-            {/* <div className="col-span-4 border">
+            <div className="col-span-4 border">
               <GameInfo />
-            </div> */}
+            </div>
           </>
         )}
       </div>
