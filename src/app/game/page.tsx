@@ -35,12 +35,12 @@ export default function page({}: Props) {
       <div className="grid grid-cols-10 gap-2 h-screen">
         {player && (
           <>
-            <div className="col-span-6 border">
+            <div className="col-span-10 border">
               <ChessBoard />
             </div>
-            <div className="col-span-4 border">
+            {/* <div className="col-span-4 border">
               <GameInfo />
-            </div>
+            </div> */}
           </>
         )}
       </div>

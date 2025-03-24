@@ -32,6 +32,14 @@ const ChessBoard = (props: Props) => {
     socket.on("message", (data: any) => {
       console.log(data);
     });
+
+    socket.on("move", (data: { from: string; to: string; promotion: string }) => {
+      console.log(data);
+      const { from, to, promotion } = data;
+      const { newMove, gameCopy } = makeAMove({ from, to, promotion });
+      handlingGameEndings(newMove?.color, gameCopy);
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -45,16 +53,22 @@ const ChessBoard = (props: Props) => {
   };
 
   const makeAMove = (moveData: { from: string; to: string; promotion: string }) => {
-    const gameCopy = new Chess(game.fen()); // Create a new instance with the current game state
-    const newMove = gameCopy.move(moveData);
+    console.log("Before move:", game.history());
 
-    if (!newMove) return null; // Invalid move, return early
+    let newMove: any;
+    setGame((prevGame) => {
+      const newGame = new Chess();
+      newGame.loadPgn(prevGame.pgn()); // Preserve history
+      newMove = newGame.move(moveData); // Make the move
 
-    // **Check game-ending conditions AFTER updating the game**
+      if (!newMove) return prevGame; // If move is invalid, return the previous state
 
-    setGame(gameCopy); // Update state with the new game instance
+      console.log("After move:", newGame.history());
 
-    return { newMove, gameCopy };
+      return newGame; // Update the state with the new game instance
+    });
+
+    return { newMove, gameCopy: game };
   };
 
   const handleOnPieceDrop = (from: string, to: string, piece: string) => {
@@ -143,6 +157,8 @@ const ChessBoard = (props: Props) => {
       setOptionSquare({});
       setCurrentSelectedPiece(null);
       handlingGameEndings(newMove?.color, gameCopy);
+
+      socket.emit("move", { from: currentSelectedPiece, to: square, promotion: "q" });
       return true;
     }
     return false;
