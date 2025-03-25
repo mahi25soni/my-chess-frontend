@@ -21,6 +21,8 @@
     }
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
+    "axios": "^1.8.4",
     "chess.js": "^1.1.0",
     "dotenv": "^16.4.7",
     "gitignore": "^0.7.0",
