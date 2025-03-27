@@ -6,20 +6,27 @@ import apiClient from "@/lib/axios.config";
 type Props = {};
 
 export default function page({}: Props) {
-  const handleSuccess = async () => {
+  const handleSuccess = async (response: any) => {
     try {
-      const { data } = await apiClient.post("/create-room", {
-        roomName: "room1",
-        personId: "person1",
-        classId: "class1",
+      const { data } = await apiClient.post("/user/login", {
+        token: response.credential,
       });
-      console.log(data);
-    } catch (error) {}
+
+      if (data?.success) {
+        console.log("success", data);
+      } else {
+        // toast.error(data?.message, toastStyle);
+        console.log("error", data?.message);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
   };
+
   return (
     <div>
       page
-      <button onClick={handleSuccess}>Click here</button>
+      <GoogleLogin onSuccess={handleSuccess}></GoogleLogin>
     </div>
   );
 }
