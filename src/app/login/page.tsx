@@ -3,10 +3,12 @@ import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import apiClient from "@/lib/axios.config";
 import { WaitingLoader } from "@/components/atoms/Loader";
+import { useAuth } from "@/context/AuthContext";
 type Props = {};
 
 export default function page({}: Props) {
   const [disableButton, setDisableButton] = React.useState(false);
+  const { setUpUserAndToken } = useAuth();
   const handleSuccess = async (response: any) => {
     try {
       setDisableButton(true);
@@ -16,6 +18,7 @@ export default function page({}: Props) {
 
       if (data?.success) {
         alert("Login Success");
+        setUpUserAndToken(data.data.token, JSON.stringify(data.data.user));
       } else {
         alert("Login Failed");
       }

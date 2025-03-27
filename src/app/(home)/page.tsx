@@ -4,8 +4,9 @@ import GameHistory from "@/components/GameHistory";
 import GameOptions from "@/components/GameOptions";
 import PlayerStats from "@/components/PlayerStats";
 import PaddingWrapper from "@/components/wrappers/PaddingWrapper";
+import ProjectedRoutes from "@/components/wrappers/ProjectedRoutes";
 
-export function HomePage() {
+function HomePage() {
   // This would come from your actual data source
   const playerStats = {
     wins: 247,
@@ -52,3 +53,5 @@ export function HomePage() {
     </div>
   );
 }
+
+export default ProjectedRoutes(HomePage);

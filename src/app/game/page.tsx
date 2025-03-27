@@ -3,10 +3,12 @@ import ChessBoard from "@/components/ChessBoard";
 import GameInfo from "@/components/GameInfo";
 import PaddingWrapper from "@/components/wrappers/PaddingWrapper";
 import React, { useState } from "react";
+import { parse } from "cookie";
+import ProjectedRoutes from "@/components/wrappers/ProjectedRoutes";
 
 type Props = {};
 
-export default function page({}: Props) {
+function page({}: Props) {
   const [player, setPlayer] = useState(null);
   return (
     <PaddingWrapper>
@@ -47,3 +49,5 @@ export default function page({}: Props) {
     </PaddingWrapper>
   );
 }
+
+export default ProjectedRoutes(page);
