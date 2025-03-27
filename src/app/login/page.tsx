@@ -1,32 +1,44 @@
 "use client";
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
-// import apiClient from ""
 import apiClient from "@/lib/axios.config";
+import { WaitingLoader } from "@/components/atoms/Loader";
 type Props = {};
 
 export default function page({}: Props) {
+  const [disableButton, setDisableButton] = React.useState(false);
   const handleSuccess = async (response: any) => {
     try {
+      setDisableButton(true);
       const { data } = await apiClient.post("/user/login", {
         token: response.credential,
       });
 
       if (data?.success) {
-        console.log("success", data);
+        alert("Login Success");
       } else {
-        // toast.error(data?.message, toastStyle);
-        console.log("error", data?.message);
+        alert("Login Failed");
       }
+
+      setDisableButton(false);
     } catch (error) {
       console.log("error", error);
     }
   };
 
   return (
-    <div>
-      page
-      <GoogleLogin onSuccess={handleSuccess}></GoogleLogin>
+    <div className="flex flex-grow justify-center items-center">
+      <div className="p-6 bg-white shadow-lg rounded-lg min-w-[300px]">
+        <h1 className="text-2xl font-bold mb-4 text-center text-blue">Login</h1>
+
+        {disableButton ? (
+          <div className="flex justify-center items-center h-20 ">
+            <WaitingLoader />
+          </div>
+        ) : (
+          <GoogleLogin onSuccess={handleSuccess} />
+        )}
+      </div>
     </div>
   );
 }

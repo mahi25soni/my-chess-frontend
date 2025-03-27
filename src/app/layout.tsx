@@ -20,8 +20,10 @@ export default function RootLayout({
       </head>
       <body>
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_SIGN_IN_CLIENT_ID}>
-          <Navbar />
-          {children}
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            {children}
+          </div>
         </GoogleOAuthProvider>
       </body>
     </html>
