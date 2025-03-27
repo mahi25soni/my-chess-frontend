@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  console.log("The user is ", user);
   return (
     <nav className="flex items-center justify-between px-8 py-6 border-b border-border-basic">
       <div className="flex items-center gap-6 ">
@@ -33,7 +34,7 @@ export default function Navbar() {
       <div className="flex items-center gap-6">
         {user ? (
           <>
-            <span className="text-off-white">Hello, {user.name}</span>
+            <span className="text-off-white">Hello, {user?.name}</span>
             <button
               onClick={logout}
               className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover"

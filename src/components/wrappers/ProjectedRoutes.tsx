@@ -10,7 +10,7 @@ export default function ProjectedRoutes(WrappedComponent) {
     const router = useRouter();
 
     useEffect(() => {
-      if (token === null || token === undefined) {
+      if (token === null || token === undefined || user === null || user === undefined) {
         router.push("/login");
       } else {
         setIsLoading(false);

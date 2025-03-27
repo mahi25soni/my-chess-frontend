@@ -24,9 +24,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = (tokenProvided, userProvided) => {
     localStorage.setItem("token", tokenProvided);
-    localStorage.setItem("user", userProvided); // ✅ Stringify user JSON
+    localStorage.setItem("user", JSON.stringify(userProvided)); // ✅ Stringify user JSON
     setToken(tokenProvided);
-    setUser(userProvided);
+    setUser(JSON.parse(userProvided));
     router.push("/"); // ✅ Redirect after login
   };
 
