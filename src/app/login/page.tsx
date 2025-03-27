@@ -8,7 +8,7 @@ type Props = {};
 
 export default function page({}: Props) {
   const [disableButton, setDisableButton] = React.useState(false);
-  const { setUpUserAndToken } = useAuth();
+  const { login } = useAuth();
   const handleSuccess = async (response: any) => {
     try {
       setDisableButton(true);
@@ -18,7 +18,7 @@ export default function page({}: Props) {
 
       if (data?.success) {
         alert("Login Success");
-        setUpUserAndToken(data.data.token, JSON.stringify(data.data.user));
+        login(data.data.token, JSON.stringify(data.data.user));
       } else {
         alert("Login Failed");
       }
