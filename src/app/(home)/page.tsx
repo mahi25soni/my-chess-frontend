@@ -4,9 +4,9 @@ import GameHistory from "@/components/GameHistory";
 import GameOptions from "@/components/GameOptions";
 import PlayerStats from "@/components/PlayerStats";
 import PaddingWrapper from "@/components/wrappers/PaddingWrapper";
-import ProjectedRoutes from "@/components/wrappers/ProjectedRoutes";
+import ProtectedPage from "@/components/wrappers/ProjectedPageWrapper";
 
-function HomePage() {
+export default function HomePage() {
   // This would come from your actual data source
   const playerStats = {
     wins: 247,
@@ -44,14 +44,12 @@ function HomePage() {
   ];
 
   return (
-    <div>
+    <ProtectedPage>
       <PaddingWrapper>
         <PlayerStats stats={playerStats} />
         <GameOptions />
         <GameHistory games={gameHistory} />
       </PaddingWrapper>
-    </div>
+    </ProtectedPage>
   );
 }
-
-export default ProjectedRoutes(HomePage);

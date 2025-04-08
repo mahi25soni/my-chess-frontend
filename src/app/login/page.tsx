@@ -6,7 +6,7 @@ import { WaitingLoader } from "@/components/atoms/Loader";
 import { useAuth } from "@/context/AuthContext";
 type Props = {};
 
-export default function page({}: Props) {
+export default function Page({}: Props) {
   const [disableButton, setDisableButton] = React.useState(false);
   const { login } = useAuth();
   const handleSuccess = async (response: any) => {

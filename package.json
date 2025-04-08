@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 5000",
-    "build": "npm run check && next build",
+    "dev": "npm run prettier &&  next dev -p 5000",
+    "build": "npm run prettier &&  next build",
     "start": "next start",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "lint:check": "eslint src --ext .js,.jsx,.ts,.tsx",
@@ -17,7 +17,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format && git diff --name-only | xargs git add"
+      "pre-commit": "npm run prettier && git diff --name-only | xargs git add"
     }
   },
   "dependencies": {
@@ -37,6 +37,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@eslint/js": "^9.24.0",
+    "@next/eslint-plugin-next": "^15.2.4",
     "@tailwindcss/postcss": "^4.0.14",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -46,11 +48,14 @@
     "eslint": "^9.22.0",
     "eslint-config-next": "15.2.3",
     "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-react": "^7.37.5",
     "husky": "^9.1.7",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "tailwindcss": "^4.0.14",
-    "typescript": "^5"
+    "typescript": "^5",
+    "typescript-eslint": "^8.29.1"
   }
 }
