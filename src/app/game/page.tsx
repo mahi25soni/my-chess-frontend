@@ -31,18 +31,18 @@ export default function Page({}: Props) {
     });
     setSocket(socket);
 
-    socket.on("message", (data: any) => {
-      console.log(data);
+    socket.on("disconnect", (reason) => {
+      console.log("❌ Socket disconnected:", reason);
     });
 
     socket.on("gameStart", (data: any) => {
-      console.log(data?.firstUser === user?.id);
       setMatchStart(data?.state);
       setPlayer({
         id: user?.id,
         color: data?.firstUser === user?.id ? "w" : "b",
       });
     });
+
     return () => {
       socket.disconnect();
     };
@@ -51,19 +51,22 @@ export default function Page({}: Props) {
   return (
     <ProtectedPage>
       <PaddingWrapper>
-        {matchStart ? <div>Loaded</div> : <div>Find for opponent...</div>}
-        {/* <div className="grid grid-cols-10 gap-2 h-screen">
-          {player && (
-            <>
-              <div className="col-span-6 border">
-                <ChessBoard player={player} socket={socket}/>
-              </div>
-              <div className="col-span-4 border">
-                <GameInfo />
-              </div>
-            </>
-          )}
-        </div> */}
+        {matchStart && player?.color && player?.id ? (
+          <div className="grid grid-cols-10 gap-2 h-screen">
+            {player && (
+              <>
+                <div className="col-span-6 border">
+                  <ChessBoard playerColor={player?.color} socket={socket} />
+                </div>
+                <div className="col-span-4 border">
+                  <GameInfo />
+                </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <div>Find for opponent...</div>
+        )}
       </PaddingWrapper>
     </ProtectedPage>
   );

@@ -5,7 +5,8 @@ import { Chessboard } from "react-chessboard";
 import Overlay from "./atoms/Overlay";
 import io, { Socket } from "socket.io-client";
 type Props = {
-  player: string;
+  playerId?: string;
+  playerColor: string;
   socket: Socket;
 };
 
@@ -20,16 +21,14 @@ const ChessBoard = (props: Props) => {
   const [winner, setWinner] = useState<string | null>(null);
 
   useEffect(() => {
-    props.socket.on("move", (data: { from: string; to: string; promotion: string }) => {
+    props.socket.on("move", (data: { from: string; to: string; promotion: string; game: any }) => {
       console.log(data);
       const { from, to, promotion } = data;
       const { newMove, gameCopy } = makeAMove({ from, to, promotion });
+
+      console.log("the move in useEffect is ", newMove);
       handlingGameEndings(newMove?.color, gameCopy);
     });
-
-    return () => {
-      props.socket.disconnect();
-    };
   }, []);
   const matchRestart = () => {
     setGame(new Chess());
@@ -40,22 +39,23 @@ const ChessBoard = (props: Props) => {
   };
 
   const makeAMove = (moveData: { from: string; to: string; promotion: string }) => {
-    console.log("Before move:", game.history());
+    const gameCopy = new Chess();
+    gameCopy.loadPgn(game.pgn()); // Safely copy current state
+    console.log("the game pgn");
 
-    let newMove: any;
-    setGame((prevGame) => {
-      const newGame = new Chess();
-      newGame.loadPgn(prevGame.pgn()); // Preserve history
-      newMove = newGame.move(moveData); // Make the move
+    console.log("The history before move is", gameCopy.history());
 
-      if (!newMove) return prevGame; // If move is invalid, return the previous state
+    const newMove = gameCopy.move(moveData);
+    if (!newMove) {
+      console.error("Invalid move!", moveData);
+      return null;
+    }
 
-      console.log("After move:", newGame.history());
+    setGame(gameCopy); // Set the updated game state
 
-      return newGame; // Update the state with the new game instance
-    });
+    console.log("The history after move is", gameCopy.history());
 
-    return { newMove, gameCopy: game };
+    return { newMove, gameCopy };
   };
 
   const handleOnPieceDrop = (from: string, to: string, piece: string) => {
@@ -114,7 +114,7 @@ const ChessBoard = (props: Props) => {
     }
   };
   const handleOnPieceClick = (piece: any, square: any) => {
-    if (props.player !== game.turn()) {
+    if (props.playerColor !== game.turn()) {
       alert("It's not your turn");
       return;
     }
@@ -145,18 +145,25 @@ const ChessBoard = (props: Props) => {
         to: square,
         promotion: "q",
       });
+      console.log("the game after the move is", gameCopy.history());
+
       setOptionSquare({});
       setCurrentSelectedPiece(null);
       handlingGameEndings(newMove?.color, gameCopy);
 
-      props.socket.emit("move", { from: currentSelectedPiece, to: square, promotion: "q" });
+      props.socket.emit("move", {
+        from: currentSelectedPiece,
+        to: square,
+        promotion: "q",
+        game: gameCopy,
+      });
       return true;
     }
     return false;
   };
 
   const handleOnPieceDragBegin = (piece: any, sourceSquare: any) => {
-    if (props.player !== game.turn()) {
+    if (props.playerColor !== game.turn()) {
       alert("It's not your turn");
       return;
     }
