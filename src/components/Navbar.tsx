@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 export default function Navbar() {
   const { user, logout } = useAuth();
   const router = useRouter();
-  console.log("The user is ", user);
 
   const handleGameLink = () => {
     router.push(`/game?gameTypeId=cm9i374u30000o8k7kgcaiprl`);

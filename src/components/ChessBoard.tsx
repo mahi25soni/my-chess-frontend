@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import Overlay from "./atoms/Overlay";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 type Props = {
   player: string;
+  socket: Socket;
 };
 
 const ChessBoard = (props: Props) => {
-  const [socket, setSocket] = useState<any>(null);
   const [game, setGame] = useState(new Chess());
 
   const [highlightedSquares, setHighlightedSquares] = useState({});
@@ -20,22 +20,7 @@ const ChessBoard = (props: Props) => {
   const [winner, setWinner] = useState<string | null>(null);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    const typeId = localStorage.getItem("typeId");
-
-    const socket = io("http://localhost:9000", {
-      query: {
-        userId,
-        typeId,
-      },
-    });
-    setSocket(socket);
-
-    socket.on("message", (data: any) => {
-      console.log(data);
-    });
-
-    socket.on("move", (data: { from: string; to: string; promotion: string }) => {
+    props.socket.on("move", (data: { from: string; to: string; promotion: string }) => {
       console.log(data);
       const { from, to, promotion } = data;
       const { newMove, gameCopy } = makeAMove({ from, to, promotion });
@@ -43,7 +28,7 @@ const ChessBoard = (props: Props) => {
     });
 
     return () => {
-      socket.disconnect();
+      props.socket.disconnect();
     };
   }, []);
   const matchRestart = () => {
@@ -164,7 +149,7 @@ const ChessBoard = (props: Props) => {
       setCurrentSelectedPiece(null);
       handlingGameEndings(newMove?.color, gameCopy);
 
-      socket.emit("move", { from: currentSelectedPiece, to: square, promotion: "q" });
+      props.socket.emit("move", { from: currentSelectedPiece, to: square, promotion: "q" });
       return true;
     }
     return false;

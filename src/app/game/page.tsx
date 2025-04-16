@@ -6,52 +6,64 @@ import ProtectedPage from "@/components/wrappers/ProjectedPageWrapper";
 import { useAuth } from "@/context/AuthContext";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import io from "socket.io-client";
 
 type Props = {};
 
 export default function Page({}: Props) {
-  const [player, setPlayer] = useState(null);
+  const [socket, setSocket] = useState<any>(null);
+  const [player, setPlayer] = useState<Record<string, string>>({
+    id: null,
+    color: null,
+  });
+  const [matchStart, setMatchStart] = useState(false);
   const { user } = useAuth();
 
   const searchParam = useSearchParams();
   const gameTypeId = searchParam.get("gameTypeId");
+
+  useEffect(() => {
+    const socket = io("http://localhost:9000", {
+      query: {
+        userId: user?.id,
+        typeId: gameTypeId,
+      },
+    });
+    setSocket(socket);
+
+    socket.on("message", (data: any) => {
+      console.log(data);
+    });
+
+    socket.on("gameStart", (data: any) => {
+      console.log(data?.firstUser === user?.id);
+      setMatchStart(data?.state);
+      setPlayer({
+        id: user?.id,
+        color: data?.firstUser === user?.id ? "w" : "b",
+      });
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   return (
     <ProtectedPage>
       <PaddingWrapper>
-        <div className="flex flex-row justify-start gap-4">
-          <button
-            onClick={() => {
-              localStorage.setItem("userId", "100");
-              localStorage.setItem("typeId", "300");
-              setPlayer("w");
-            }}
-            className="bg-blue-500 text-white px-4 py-2 rounded w-full"
-          >
-            Set Player to White
-          </button>
-          <button
-            onClick={() => {
-              localStorage.setItem("userId", "200");
-              localStorage.setItem("typeId", "300");
-              setPlayer("b");
-            }}
-            className="bg-red-500 text-white px-4 py-2 rounded w-full"
-          >
-            Set Player to Black
-          </button>
-        </div>
-        <div className="grid grid-cols-10 gap-2 h-screen">
+        {matchStart ? <div>Loaded</div> : <div>Find for opponent...</div>}
+        {/* <div className="grid grid-cols-10 gap-2 h-screen">
           {player && (
             <>
               <div className="col-span-6 border">
-                <ChessBoard player={player} />
+                <ChessBoard player={player} socket={socket}/>
               </div>
               <div className="col-span-4 border">
                 <GameInfo />
               </div>
             </>
           )}
-        </div>
+        </div> */}
       </PaddingWrapper>
     </ProtectedPage>
   );
