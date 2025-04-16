@@ -3,12 +3,18 @@ import ChessBoard from "@/components/ChessBoard";
 import GameInfo from "@/components/GameInfo";
 import PaddingWrapper from "@/components/wrappers/PaddingWrapper";
 import ProtectedPage from "@/components/wrappers/ProjectedPageWrapper";
-import React, { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 type Props = {};
 
 export default function Page({}: Props) {
   const [player, setPlayer] = useState(null);
+  const { user } = useAuth();
+
+  const searchParam = useSearchParams();
+  const gameTypeId = searchParam.get("gameTypeId");
   return (
     <ProtectedPage>
       <PaddingWrapper>
