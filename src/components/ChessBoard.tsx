@@ -19,17 +19,26 @@ const ChessBoard = (props: Props) => {
 
   const [matchEnd, setMatchEnd] = useState<boolean>(false);
   const [winner, setWinner] = useState<string | null>(null);
+  const [gameHistory, setGameHistory] = useState<string[]>([]);
 
   useEffect(() => {
     props.socket.on("move", (data: { from: string; to: string; promotion: string; game: any }) => {
-      console.log(data);
-      const { from, to, promotion } = data;
-      const { newMove, gameCopy } = makeAMove({ from, to, promotion });
+      const { from, to, promotion, game: gameData } = data;
 
-      console.log("the move in useEffect is ", newMove);
-      handlingGameEndings(newMove?.color, gameCopy);
+      // Load the game using FEN from the server (this is the source of truth for the board state)
+      const gameCopy = new Chess();
+      gameCopy.load(gameData.fen); // This ensures you're loading the correct game state (FEN)
+      setGame(gameCopy); // Update the local game state to sync with the server
+
+      // Update the move history (PGN)
+      gameCopy.loadPgn(gameData.pgn); // Load PGN to keep history in sync
+      setGameHistory(gameCopy.history()); // If you want to display history locally
+
+      // Handle game endings (checkmate, stalemate, etc.)
+      handlingGameEndings(gameCopy.turn(), gameCopy);
     });
   }, []);
+
   const matchRestart = () => {
     setGame(new Chess());
     setOptionSquare({});
@@ -41,7 +50,6 @@ const ChessBoard = (props: Props) => {
   const makeAMove = (moveData: { from: string; to: string; promotion: string }) => {
     const gameCopy = new Chess();
     gameCopy.loadPgn(game.pgn()); // Safely copy current state
-    console.log("the game pgn");
 
     console.log("The history before move is", gameCopy.history());
 
@@ -155,7 +163,10 @@ const ChessBoard = (props: Props) => {
         from: currentSelectedPiece,
         to: square,
         promotion: "q",
-        game: gameCopy,
+        game: {
+          fen: gameCopy.fen(), // Current board state
+          pgn: gameCopy.pgn(), // Updated move history
+        },
       });
       return true;
     }

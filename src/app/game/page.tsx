@@ -32,7 +32,7 @@ export default function Page({}: Props) {
     setSocket(socket);
 
     socket.on("disconnect", (reason) => {
-      console.log("❌ Socket disconnected:", reason);
+      console.log("Socket disconnected:", reason);
     });
 
     socket.on("gameStart", (data: any) => {
