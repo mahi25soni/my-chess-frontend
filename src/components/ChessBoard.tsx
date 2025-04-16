@@ -24,18 +24,13 @@ const ChessBoard = (props: Props) => {
   useEffect(() => {
     props.socket.on("move", (data: { from: string; to: string; promotion: string; game: any }) => {
       const { from, to, promotion, game: gameData } = data;
-
-      // Load the game using FEN from the server (this is the source of truth for the board state)
       const gameCopy = new Chess();
-      gameCopy.load(gameData.fen); // This ensures you're loading the correct game state (FEN)
-      setGame(gameCopy); // Update the local game state to sync with the server
-
-      // Update the move history (PGN)
-      gameCopy.loadPgn(gameData.pgn); // Load PGN to keep history in sync
-      setGameHistory(gameCopy.history()); // If you want to display history locally
-
-      // Handle game endings (checkmate, stalemate, etc.)
-      handlingGameEndings(gameCopy.turn(), gameCopy);
+      gameCopy.load(gameData.fen);
+      setGame(gameCopy);
+      gameCopy.loadPgn(gameData.pgn);
+      setGameHistory(gameCopy.history());
+      const lastMoveColor = gameCopy.history().length % 2 === 0 ? "b" : "w";
+      handlingGameEndings(lastMoveColor, gameCopy);
     });
   }, []);
 
@@ -208,7 +203,9 @@ const ChessBoard = (props: Props) => {
         // customSquareStyles={highlightedSquares}
         customSquareStyles={optionSquare}
         onSquareClick={handleSquareClick}
+        boardOrientation={props.playerColor === "b" ? "black" : "white"}
       />
+
       {matchEnd && <MatchEndModal winner={winner} matchRestart={matchRestart} />}
     </div>
   );
