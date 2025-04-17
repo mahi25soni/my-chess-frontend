@@ -8,6 +8,7 @@ type Props = {
   playerId?: string;
   playerColor: string;
   socket: Socket;
+  setTheGameHistory: (history: string[]) => void;
 };
 
 const ChessBoard = (props: Props) => {
@@ -35,7 +36,7 @@ const ChessBoard = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log("Updating game history:", game.history());
+    props.setTheGameHistory(game.history());
   }, [game]);
 
   const matchRestart = () => {

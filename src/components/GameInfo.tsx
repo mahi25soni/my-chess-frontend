@@ -1,11 +1,13 @@
 "use client";
 import React from "react";
 
-type Props = {};
+type Props = {
+  theGameHistory: string[];
+};
 
-const chessSquares = [];
+const theGameHistory = [];
 
-export default function GameInfo({}: Props) {
+export default function GameInfo({ theGameHistory }: Props) {
   return (
     <div className="w-full h-[650px] border-border-basic border rounded-yes text-black p-4 flex flex-col justify-between ">
       <div className="flex flex-col h-[550px]">
@@ -13,9 +15,9 @@ export default function GameInfo({}: Props) {
           Play New Game
         </button>
         <div className="flex-1 text-sm space-y-2 overflow-auto">
-          {Array.from({ length: Math.ceil(chessSquares.length / 2) }).map((_, rowIndex) => {
-            const first = chessSquares[rowIndex * 2];
-            const second = chessSquares[rowIndex * 2 + 1];
+          {Array.from({ length: Math.ceil(theGameHistory.length / 2) }).map((_, rowIndex) => {
+            const first = theGameHistory[rowIndex * 2];
+            const second = theGameHistory[rowIndex * 2 + 1];
 
             return (
               <div

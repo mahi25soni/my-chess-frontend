@@ -21,6 +21,7 @@ export default function Page({}: Props) {
 
   const searchParam = useSearchParams();
   const gameTypeId = searchParam.get("gameTypeId");
+  const [theGameHistory, setTheGameHistory] = useState<string[]>([]);
 
   useEffect(() => {
     const socket = io("http://localhost:9000", {
@@ -56,10 +57,14 @@ export default function Page({}: Props) {
             {player && (
               <>
                 <div className="col-span-8">
-                  <ChessBoard playerColor={player?.color} socket={socket} />
+                  <ChessBoard
+                    playerColor={player?.color}
+                    socket={socket}
+                    setTheGameHistory={setTheGameHistory}
+                  />
                 </div>
                 <div className="col-span-4">
-                  <GameInfo />
+                  <GameInfo theGameHistory={theGameHistory} />
                 </div>
               </>
             )}
