@@ -44,7 +44,18 @@ const ChessBoard = (props: Props) => {
 
   const makeAMove = (moveData: { from: string; to: string; promotion: string }) => {
     const gameCopy = new Chess();
-    gameCopy.loadPgn(game.pgn()); // Safely copy current state
+
+    const pgn = game.pgn();
+    const hasMoves = game.history().length > 0;
+
+    if (hasMoves) {
+      try {
+        gameCopy.loadPgn(pgn); // Only load PGN if there are actual moves
+      } catch (error) {
+        console.error("Failed to load PGN:", pgn);
+        return null;
+      }
+    }
 
     console.log("The history before move is", gameCopy.history());
 
@@ -54,7 +65,7 @@ const ChessBoard = (props: Props) => {
       return null;
     }
 
-    setGame(gameCopy); // Set the updated game state
+    setGame(gameCopy);
 
     console.log("The history after move is", gameCopy.history());
 
