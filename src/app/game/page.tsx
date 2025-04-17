@@ -4,7 +4,7 @@ import GameInfo from "@/components/GameInfo";
 import PaddingWrapper from "@/components/wrappers/PaddingWrapper";
 import ProtectedPage from "@/components/wrappers/ProjectedPageWrapper";
 import { useAuth } from "@/context/AuthContext";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
@@ -18,6 +18,7 @@ export default function Page({}: Props) {
   });
   const [matchStart, setMatchStart] = useState(false);
   const { user } = useAuth();
+  const router = useRouter();
 
   const searchParam = useSearchParams();
   const gameTypeId = searchParam.get("gameTypeId");
@@ -44,11 +45,37 @@ export default function Page({}: Props) {
       });
     });
 
+    socket.on("quit-event", (data: any) => {
+      setMatchStart(false);
+      setPlayer({
+        id: null,
+        color: null,
+      });
+      setTheGameHistory([]);
+      router.push("/");
+      alert("Opponent left the game");
+    });
+
     return () => {
       socket.disconnect();
     };
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = ""; // Required for Chrome to show the confirmation dialog
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  console.log("the match start is ", matchStart);
+  console.log("the player is ", player);
   return (
     <ProtectedPage>
       <PaddingWrapper>
