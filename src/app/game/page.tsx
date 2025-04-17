@@ -52,13 +52,13 @@ export default function Page({}: Props) {
     <ProtectedPage>
       <PaddingWrapper>
         {matchStart && player?.color && player?.id ? (
-          <div className="grid grid-cols-10 gap-2 h-screen">
+          <div className="grid grid-cols-12 px-20">
             {player && (
               <>
-                <div className="col-span-6 border">
+                <div className="col-span-8">
                   <ChessBoard playerColor={player?.color} socket={socket} />
                 </div>
-                <div className="col-span-4 border">
+                <div className="col-span-4">
                   <GameInfo />
                 </div>
               </>

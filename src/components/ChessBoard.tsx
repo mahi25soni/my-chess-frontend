@@ -34,6 +34,10 @@ const ChessBoard = (props: Props) => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log("Updating game history:", game.history());
+  }, [game]);
+
   const matchRestart = () => {
     setGame(new Chess());
     setOptionSquare({});
@@ -57,7 +61,7 @@ const ChessBoard = (props: Props) => {
       }
     }
 
-    console.log("The history before move is", gameCopy.history());
+    // console.log("The history before move is", gameCopy.history());
 
     const newMove = gameCopy.move(moveData);
     if (!newMove) {
@@ -67,7 +71,7 @@ const ChessBoard = (props: Props) => {
 
     setGame(gameCopy);
 
-    console.log("The history after move is", gameCopy.history());
+    // console.log("The history after move is", gameCopy.history());
 
     return { newMove, gameCopy };
   };
@@ -159,7 +163,6 @@ const ChessBoard = (props: Props) => {
         to: square,
         promotion: "q",
       });
-      console.log("the game after the move is", gameCopy.history());
 
       setOptionSquare({});
       setCurrentSelectedPiece(null);
@@ -214,7 +217,12 @@ const ChessBoard = (props: Props) => {
         // customSquareStyles={highlightedSquares}
         customSquareStyles={optionSquare}
         onSquareClick={handleSquareClick}
+        boardWidth={600}
         boardOrientation={props.playerColor === "b" ? "black" : "white"}
+        customBoardStyle={{
+          borderRadius: "16px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        }}
       />
 
       {matchEnd && <MatchEndModal winner={winner} matchRestart={matchRestart} />}
