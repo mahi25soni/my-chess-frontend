@@ -4,6 +4,7 @@ import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import Overlay from "./atoms/Overlay";
 import io, { Socket } from "socket.io-client";
+import useSound from "use-sound";
 type Props = {
   playerId?: string;
   playerColor: string;
@@ -13,6 +14,9 @@ type Props = {
 
 const ChessBoard = (props: Props) => {
   const [game, setGame] = useState(new Chess());
+  const [MoveSelfPlaySound] = useSound("/sounds/move-self.mp3", { volume: 1 });
+  const [CapturePlaySound] = useSound("/sounds/capture.mp3", { volume: 1 });
+  const [MoveCheckSound] = useSound("/sounds/move-check.mp3", { volume: 1 });
 
   const [highlightedSquares, setHighlightedSquares] = useState({});
   const [optionSquare, setOptionSquare] = useState({});
@@ -74,6 +78,8 @@ const ChessBoard = (props: Props) => {
 
     // console.log("The history after move is", gameCopy.history());
 
+    MoveSelfPlaySound();
+
     return { newMove, gameCopy };
   };
 
@@ -130,6 +136,8 @@ const ChessBoard = (props: Props) => {
           background: "rgba(255, 0, 0, 0.3)",
         },
       });
+
+      MoveCheckSound();
     }
   };
   const handleOnPieceClick = (piece: any, square: any) => {
@@ -178,6 +186,7 @@ const ChessBoard = (props: Props) => {
           pgn: gameCopy.pgn(), // Updated move history
         },
       });
+
       return true;
     }
     return false;
