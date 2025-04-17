@@ -74,8 +74,10 @@ export default function Page({}: Props) {
     };
   }, []);
 
-  console.log("the match start is ", matchStart);
-  console.log("the player is ", player);
+  const handleQuitGame = () => {
+    socket.emit("quit-event");
+    router.push("/");
+  };
   return (
     <ProtectedPage>
       <PaddingWrapper>
@@ -91,7 +93,7 @@ export default function Page({}: Props) {
                   />
                 </div>
                 <div className="col-span-4">
-                  <GameInfo theGameHistory={theGameHistory} />
+                  <GameInfo theGameHistory={theGameHistory} handleQuitGame={handleQuitGame} />
                 </div>
               </>
             )}

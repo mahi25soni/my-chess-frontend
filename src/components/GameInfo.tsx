@@ -3,11 +3,12 @@ import React from "react";
 
 type Props = {
   theGameHistory: string[];
+  handleQuitGame: () => void;
 };
 
 const theGameHistory = [];
 
-export default function GameInfo({ theGameHistory }: Props) {
+export default function GameInfo({ theGameHistory, handleQuitGame }: Props) {
   return (
     <div className="w-full h-[650px] border-border-basic border rounded-yes text-black p-4 flex flex-col justify-between ">
       <div className="flex flex-col h-[550px]">
@@ -36,10 +37,16 @@ export default function GameInfo({ theGameHistory }: Props) {
       </div>
 
       <div className="flex justify-center items-center gap-4 ">
-        <button className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full">
+        <button
+          className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full"
+          onClick={handleQuitGame}
+        >
           Quit
         </button>
-        <button className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full">
+        <button
+          className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full"
+          onClick={handleQuitGame}
+        >
           Resign
         </button>
       </div>
