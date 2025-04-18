@@ -16,6 +16,8 @@ type Props = {
     email: string;
   };
   opponent: {
+    id: string;
+    color: string;
     name: string;
     email: string;
   };
@@ -77,8 +79,6 @@ const ChessBoard = (props: Props) => {
       }
     }
 
-    // console.log("The history before move is", gameCopy.history());
-
     const newMove = gameCopy.move(moveData);
     if (!newMove) {
       console.error("Invalid move!", moveData);
@@ -86,8 +86,6 @@ const ChessBoard = (props: Props) => {
     }
 
     setGame(gameCopy);
-
-    // console.log("The history after move is", gameCopy.history());
 
     MoveSelfPlaySound();
 
@@ -126,6 +124,7 @@ const ChessBoard = (props: Props) => {
             pgn: gameCopy.pgn(), // Updated move history
           },
           winner: props.currentUser,
+          losser: props.opponent,
         });
       }
     } else if (gameCopy.isStalemate()) {

@@ -22,6 +22,8 @@ export default function Page({}: Props) {
   const [opponent, setOpponent] = useState({
     name: null,
     email: null,
+    id: null,
+    color: null,
   });
   const [matchStart, setMatchStart] = useState(false);
   const { user } = useAuth();
@@ -59,6 +61,8 @@ export default function Page({}: Props) {
       setOpponent({
         name: data?.opponentName,
         email: data?.opponentEmail,
+        id: data?.opponentId,
+        color: data?.firstUser === user?.id ? "w" : "b",
       });
     });
 
