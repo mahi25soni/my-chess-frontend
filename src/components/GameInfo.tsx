@@ -3,7 +3,7 @@ import React from "react";
 
 type Props = {
   theGameHistory: string[];
-  handleQuitGame: () => void;
+  handleQuitGame: (string) => void;
 };
 
 const theGameHistory = [];
@@ -39,13 +39,13 @@ export default function GameInfo({ theGameHistory, handleQuitGame }: Props) {
       <div className="flex justify-center items-center gap-4 ">
         <button
           className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full"
-          onClick={handleQuitGame}
+          onClick={() => handleQuitGame("You win, Your opponent has quit the game")}
         >
           Quit
         </button>
         <button
           className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full"
-          onClick={handleQuitGame}
+          onClick={() => handleQuitGame("You win, Your opponent has resigned the game")}
         >
           Resign
         </button>

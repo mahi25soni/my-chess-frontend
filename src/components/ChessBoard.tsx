@@ -5,6 +5,7 @@ import { Chessboard } from "react-chessboard";
 import Overlay from "./atoms/Overlay";
 import io, { Socket } from "socket.io-client";
 import useSound from "use-sound";
+import { useRouter } from "next/navigation";
 type Props = {
   socket: Socket;
   setTheGameHistory: (history: string[]) => void;
@@ -33,6 +34,8 @@ const ChessBoard = (props: Props) => {
   const [matchEnd, setMatchEnd] = useState<boolean>(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [gameHistory, setGameHistory] = useState<string[]>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     props.socket.on("move", (data: { from: string; to: string; promotion: string; game: any }) => {
@@ -115,6 +118,16 @@ const ChessBoard = (props: Props) => {
     if (gameCopy.isCheckmate()) {
       setWinner(color === "w" ? "White" : "Black");
       setMatchEnd(true);
+
+      if (props.currentUser.color === color) {
+        props.socket.emit("game-over", {
+          game: {
+            fen: gameCopy.fen(), // Current board state
+            pgn: gameCopy.pgn(), // Updated move history
+          },
+          winner: props.currentUser,
+        });
+      }
     } else if (gameCopy.isStalemate()) {
       setTimeout(() => alert(`${color === "w" ? "White wins" : "Black wins"}`), 1500);
     } else if (gameCopy.isInsufficientMaterial()) {
@@ -225,6 +238,17 @@ const ChessBoard = (props: Props) => {
     setCurrentSelectedPiece(sourceSquare);
     setOptionSquare(newSquares);
   };
+
+  const handleQuitGame = (message: string) => {
+    props.socket.emit("quit-event", message);
+    router.push("/");
+  };
+
+  const newMatchWithSameSocket = () => {
+    props.socket.emit("new-match");
+    matchRestart();
+    setMatchEnd(false);
+  };
   return (
     <div>
       <div>
@@ -258,25 +282,49 @@ const ChessBoard = (props: Props) => {
         </p>
       </div>
 
-      {matchEnd && <MatchEndModal winner={winner} matchRestart={matchRestart} />}
+      {matchEnd && (
+        <MatchEndModal
+          winner={winner}
+          handleQuitGame={handleQuitGame}
+          newMatchWithSameSocket={newMatchWithSameSocket}
+        />
+      )}
     </div>
   );
 };
 
-const MatchEndModal = ({ winner, matchRestart }: { winner: string; matchRestart: () => void }) => {
+const MatchEndModal = ({
+  winner,
+  handleQuitGame,
+  newMatchWithSameSocket,
+}: {
+  winner: string;
+  handleQuitGame: (string) => void;
+  newMatchWithSameSocket: () => void;
+}) => {
   return (
-    <Overlay onClose={matchRestart}>
+    <Overlay onClose={newMatchWithSameSocket}>
       <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-80 animate-fadeIn">
         <h1 className="text-3xl font-extrabold text-gray-900">Game Over</h1>
         <p className="text-lg text-gray-600 mt-2">{winner} wins</p>
 
-        <button
-          className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
+        <div className="flex justify-center items-center gap-4 ">
+          <button
+            className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
                transition-all duration-200 hover:bg-blue-700 active:scale-95"
-          onClick={matchRestart}
-        >
-          Play Again
-        </button>
+            onClick={() => handleQuitGame("Nothing")}
+          >
+            Back to Home
+          </button>
+
+          <button
+            className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
+               transition-all duration-200 hover:bg-blue-700 active:scale-95"
+            onClick={newMatchWithSameSocket}
+          >
+            Play new match
+          </button>
+        </div>
       </div>
     </Overlay>
   );

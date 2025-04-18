@@ -30,7 +30,7 @@ export default function Page({}: Props) {
   const searchParam = useSearchParams();
   const gameTypeId = searchParam.get("gameTypeId");
   const [theGameHistory, setTheGameHistory] = useState<string[]>([]);
-  const [matchEnd, setMatchEnd] = useState<boolean>(false);
+  const [matchEndMessage, setMatchEndMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const socket = io("http://localhost:9000", {
@@ -71,7 +71,7 @@ export default function Page({}: Props) {
         email: null,
       });
       setTheGameHistory([]);
-      setMatchEnd(true);
+      setMatchEndMessage(data?.message);
     });
 
     return () => {
@@ -79,14 +79,14 @@ export default function Page({}: Props) {
     };
   }, []);
 
-  const handleQuitGame = () => {
-    socket.emit("quit-event");
+  const handleQuitGame = (message: string) => {
+    socket.emit("quit-event", message);
     router.push("/");
   };
 
   const newMatchWithSameSocket = () => {
     socket.emit("new-match");
-    setMatchEnd(false);
+    setMatchEndMessage(null);
   };
   return (
     <ProtectedPage>
@@ -112,10 +112,11 @@ export default function Page({}: Props) {
         ) : (
           <div>Find for opponent...</div>
         )}
-        {matchEnd && (
+        {matchEndMessage && (
           <OpponentQuits
             handleQuitGame={handleQuitGame}
             newMatchWithSameSocket={newMatchWithSameSocket}
+            message={matchEndMessage}
           />
         )}
       </PaddingWrapper>
@@ -126,21 +127,23 @@ export default function Page({}: Props) {
 const OpponentQuits = ({
   handleQuitGame,
   newMatchWithSameSocket,
+  message,
 }: {
-  handleQuitGame: () => void;
+  handleQuitGame: (string) => void;
   newMatchWithSameSocket: () => void;
+  message: string;
 }) => {
   return (
     <Overlay onClose={newMatchWithSameSocket}>
       <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-80 animate-fadeIn">
         <h1 className="text-3xl font-extrabold text-gray-900">Game Over</h1>
-        <p className="text-lg text-gray-600 mt-2">You win, your opponent quits or resign!</p>
+        <p className="text-lg text-gray-600 mt-2">{message}</p>
 
         <div className="flex justify-center items-center gap-4 ">
           <button
             className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
                transition-all duration-200 hover:bg-blue-700 active:scale-95"
-            onClick={handleQuitGame}
+            onClick={() => handleQuitGame("Nothing")}
           >
             Back to Home
           </button>
