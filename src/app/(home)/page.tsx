@@ -6,6 +6,8 @@ import PlayerStats from "@/components/PlayerStats";
 import PaddingWrapper from "@/components/wrappers/PaddingWrapper";
 import ProtectedPage from "@/components/wrappers/ProjectedPageWrapper";
 
+export const dynamic = "force-dynamic";
+
 export default function HomePage() {
   // This would come from your actual data source
   const playerStats = {
