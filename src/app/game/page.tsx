@@ -1,4 +1,5 @@
 "use client";
+import Overlay from "@/components/atoms/Overlay";
 import ChessBoard from "@/components/ChessBoard";
 import GameInfo from "@/components/GameInfo";
 import PaddingWrapper from "@/components/wrappers/PaddingWrapper";
@@ -29,6 +30,7 @@ export default function Page({}: Props) {
   const searchParam = useSearchParams();
   const gameTypeId = searchParam.get("gameTypeId");
   const [theGameHistory, setTheGameHistory] = useState<string[]>([]);
+  const [matchEnd, setMatchEnd] = useState<boolean>(false);
 
   useEffect(() => {
     const socket = io("http://localhost:9000", {
@@ -58,8 +60,6 @@ export default function Page({}: Props) {
         name: data?.opponentName,
         email: data?.opponentEmail,
       });
-
-      console.log("Oponent for " + user?.email, data);
     });
 
     socket.on("quit-event", (data: any) => {
@@ -71,7 +71,7 @@ export default function Page({}: Props) {
         email: null,
       });
       setTheGameHistory([]);
-      router.push("/");
+      setMatchEnd(true);
     });
 
     return () => {
@@ -82,6 +82,11 @@ export default function Page({}: Props) {
   const handleQuitGame = () => {
     socket.emit("quit-event");
     router.push("/");
+  };
+
+  const newMatchWithSameSocket = () => {
+    socket.emit("new-match");
+    setMatchEnd(false);
   };
   return (
     <ProtectedPage>
@@ -107,7 +112,48 @@ export default function Page({}: Props) {
         ) : (
           <div>Find for opponent...</div>
         )}
+        {matchEnd && (
+          <OpponentQuits
+            handleQuitGame={handleQuitGame}
+            newMatchWithSameSocket={newMatchWithSameSocket}
+          />
+        )}
       </PaddingWrapper>
     </ProtectedPage>
   );
 }
+
+const OpponentQuits = ({
+  handleQuitGame,
+  newMatchWithSameSocket,
+}: {
+  handleQuitGame: () => void;
+  newMatchWithSameSocket: () => void;
+}) => {
+  return (
+    <Overlay onClose={newMatchWithSameSocket}>
+      <div className="bg-white p-6 rounded-2xl shadow-lg text-center w-80 animate-fadeIn">
+        <h1 className="text-3xl font-extrabold text-gray-900">Game Over</h1>
+        <p className="text-lg text-gray-600 mt-2">You win, your opponent quits or resign!</p>
+
+        <div className="flex justify-center items-center gap-4 ">
+          <button
+            className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
+               transition-all duration-200 hover:bg-blue-700 active:scale-95"
+            onClick={handleQuitGame}
+          >
+            Back to Home
+          </button>
+
+          <button
+            className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
+               transition-all duration-200 hover:bg-blue-700 active:scale-95"
+            onClick={newMatchWithSameSocket}
+          >
+            Play new match
+          </button>
+        </div>
+      </div>
+    </Overlay>
+  );
+};
