@@ -6,10 +6,18 @@ import Overlay from "./atoms/Overlay";
 import io, { Socket } from "socket.io-client";
 import useSound from "use-sound";
 type Props = {
-  playerId?: string;
-  playerColor: string;
   socket: Socket;
   setTheGameHistory: (history: string[]) => void;
+  currentUser: {
+    id: string;
+    color: string;
+    name: string;
+    email: string;
+  };
+  opponent: {
+    name: string;
+    email: string;
+  };
 };
 
 const ChessBoard = (props: Props) => {
@@ -141,7 +149,7 @@ const ChessBoard = (props: Props) => {
     }
   };
   const handleOnPieceClick = (piece: any, square: any) => {
-    if (props.playerColor !== game.turn()) {
+    if (props.currentUser.color !== game.turn()) {
       alert("It's not your turn");
       return;
     }
@@ -193,7 +201,7 @@ const ChessBoard = (props: Props) => {
   };
 
   const handleOnPieceDragBegin = (piece: any, sourceSquare: any) => {
-    if (props.playerColor !== game.turn()) {
+    if (props.currentUser.color !== game.turn()) {
       alert("It's not your turn");
       return;
     }
@@ -219,6 +227,13 @@ const ChessBoard = (props: Props) => {
   };
   return (
     <div>
+      <div>
+        <p className="text-lg text-gray-600 flex items-center justify-start space-x-1">
+          <span className="font-semibold">{props.opponent.name}</span>
+          <span className="text-gray-400">|</span>
+          <span>{props.opponent.email}</span>
+        </p>
+      </div>
       <Chessboard
         position={game.fen()}
         onPieceDragBegin={handleOnPieceDragBegin}
@@ -228,12 +243,20 @@ const ChessBoard = (props: Props) => {
         customSquareStyles={optionSquare}
         onSquareClick={handleSquareClick}
         boardWidth={600}
-        boardOrientation={props.playerColor === "b" ? "black" : "white"}
+        boardOrientation={props.currentUser.color === "b" ? "black" : "white"}
         customBoardStyle={{
           borderRadius: "16px",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       />
+
+      <div>
+        <p className="text-lg text-gray-600 flex items-center justify-start space-x-1">
+          <span className="font-semibold">{props.currentUser.name}</span>
+          <span className="text-gray-400">|</span>
+          <span>{props.currentUser.email}</span>
+        </p>
+      </div>
 
       {matchEnd && <MatchEndModal winner={winner} matchRestart={matchRestart} />}
     </div>

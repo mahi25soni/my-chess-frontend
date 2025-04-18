@@ -12,9 +12,15 @@ type Props = {};
 
 export default function Page({}: Props) {
   const [socket, setSocket] = useState<any>(null);
-  const [player, setPlayer] = useState<Record<string, string>>({
+  const [player, setPlayer] = useState({
     id: null,
     color: null,
+    name: null,
+    email: null,
+  });
+  const [opponent, setOpponent] = useState({
+    name: null,
+    email: null,
   });
   const [matchStart, setMatchStart] = useState(false);
   const { user } = useAuth();
@@ -29,6 +35,8 @@ export default function Page({}: Props) {
       query: {
         userId: user?.id,
         typeId: gameTypeId,
+        name: user?.name,
+        email: user?.email,
       },
     });
     setSocket(socket);
@@ -42,7 +50,16 @@ export default function Page({}: Props) {
       setPlayer({
         id: user?.id,
         color: data?.firstUser === user?.id ? "w" : "b",
+        name: user?.name,
+        email: user?.email,
       });
+
+      setOpponent({
+        name: data?.opponentName,
+        email: data?.opponentEmail,
+      });
+
+      console.log("Oponent for " + user?.email, data);
     });
 
     socket.on("quit-event", (data: any) => {
@@ -50,27 +67,15 @@ export default function Page({}: Props) {
       setPlayer({
         id: null,
         color: null,
+        name: null,
+        email: null,
       });
       setTheGameHistory([]);
       router.push("/");
-      alert("Opponent left the game");
     });
 
     return () => {
       socket.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      e.preventDefault();
-      e.returnValue = ""; // Required for Chrome to show the confirmation dialog
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
@@ -82,17 +87,18 @@ export default function Page({}: Props) {
     <ProtectedPage>
       <PaddingWrapper>
         {matchStart && player?.color && player?.id ? (
-          <div className="grid grid-cols-12 px-20">
+          <div className="grid grid-cols-12 px-2  xl:px-20 lg:px-5 md:px-0 gap-4">
             {player && (
               <>
-                <div className="col-span-8">
+                <div className="md:col-span-8 col-span-12">
                   <ChessBoard
-                    playerColor={player?.color}
                     socket={socket}
                     setTheGameHistory={setTheGameHistory}
+                    currentUser={player}
+                    opponent={opponent}
                   />
                 </div>
-                <div className="col-span-4">
+                <div className="md:col-span-4 col-span-12 ">
                   <GameInfo theGameHistory={theGameHistory} handleQuitGame={handleQuitGame} />
                 </div>
               </>
