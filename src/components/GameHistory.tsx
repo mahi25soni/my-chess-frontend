@@ -14,7 +14,7 @@ type GameHistoryItem = {
 
 export default function GameHistory({ games }: { games: GameHistoryItem[] }) {
   return (
-    <div className="mt-8 border border-border-basic rounded-lg overflow-hidden">
+    <div className="mt-8 border border-border-basic rounded-lg overflow-x-scroll">
       <table className="w-full">
         <thead>
           <tr className="bg-dark-white text-left">
@@ -22,7 +22,6 @@ export default function GameHistory({ games }: { games: GameHistoryItem[] }) {
             <th className="py-4 px-6">Date & Time</th>
             <th className="py-4 px-6">Game Type</th>
             <th className="py-4 px-6">Result</th>
-            <th className="py-4 px-6">Accuracy</th>
             <th className="py-4 px-6">Actions</th>
           </tr>
         </thead>
@@ -45,7 +44,6 @@ export default function GameHistory({ games }: { games: GameHistoryItem[] }) {
                   {game.result}
                 </span>
               </td>
-              <td className="py-4 px-6">{game.accuracy}%</td>
               <td className="py-4 px-6 flex gap-2">
                 {/* Action buttons - replay, analysis, share */}
                 <button className="p-1">↻</button>
