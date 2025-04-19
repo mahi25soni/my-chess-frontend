@@ -13,7 +13,7 @@ export function GameButton({ label, onClick, primary = false }: GameButtonProps)
   return (
     <button
       onClick={onClick}
-      className={`button-hover py-3 px-4 border border-border-basic rounded-yes text-center w-full  ${
+      className={`text-sm md:text:md button-hover md:py-3 md:px-4 p-1 border border-border-basic rounded-yes text-center w-full  ${
         primary ? "bg-blue text-white" : " text-off-white"
       }  hover:border-blue`}
     >
@@ -42,7 +42,7 @@ export default function GameOptions() {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-4 mt-6">
+    <div className="grid md:grid-cols-4 gap-4 mt-6 grid-cols-2">
       <GameButton
         label="Start New Game"
         onClick={() => {
