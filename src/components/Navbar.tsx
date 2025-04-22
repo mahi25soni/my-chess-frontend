@@ -16,7 +16,7 @@ export default function Navbar() {
   };
 
   const handleGameLink = () => {
-    router.push(`/game?gameTypeId=cm9i374u30000o8k7kgcaiprl`);
+    router.push(`/game?gameTypeId=${process.env.NEXT_PUBLIC_10_MINUTES_GAMEID}`);
   };
 
   const toggleMenu = () => {

@@ -4,7 +4,7 @@ const getBaseURL = () => {
     case "development":
       return "http://localhost:9000/api"; // Dev environment API
     case "production":
-      return "http://ec2-13-201-228-252.ap-south-1.compute.amazonaws.com:9000/api/"; // Production API
+      return "http://ec2-13-201-228-252.ap-south-1.compute.amazonaws.com:9000/"; // Production API
     default:
       return "http://localhost:9000/api"; // Local development API
   }

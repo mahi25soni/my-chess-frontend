@@ -47,7 +47,7 @@ export default function GameOptions() {
         label="Start New Game"
         onClick={() => {
           /* handle click */
-          handleGameTypeClick("cm9i374u30000o8k7kgcaiprl");
+          handleGameTypeClick(process.env.NEXT_PUBLIC_10_MINUTES_GAMEID);
         }}
         primary={true}
       />

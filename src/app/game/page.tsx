@@ -35,7 +35,7 @@ export default function Page({}: Props) {
   const [matchEndMessage, setMatchEndMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const socket = io("http://localhost:9000", {
+    const socket = io(process.env.API_BASE_URL, {
       query: {
         userId: user?.id,
         typeId: gameTypeId,
