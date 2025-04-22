@@ -1,5 +1,3 @@
-"use client";
-
 import GameHistory from "@/components/GameHistory";
 import GameOptions from "@/components/GameOptions";
 import PlayerStats from "@/components/PlayerStats";
