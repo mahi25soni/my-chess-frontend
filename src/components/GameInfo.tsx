@@ -1,12 +1,11 @@
 "use client";
 import React from "react";
+type MatchEndReason = "resigned" | "quit" | "back";
 
 type Props = {
   theGameHistory: string[];
-  handleQuitGame: (string) => void;
+  handleQuitGame: (string, MatchEndReason) => void;
 };
-
-const theGameHistory = [];
 
 export default function GameInfo({ theGameHistory, handleQuitGame }: Props) {
   return (
@@ -39,13 +38,13 @@ export default function GameInfo({ theGameHistory, handleQuitGame }: Props) {
       <div className="flex justify-center items-center gap-4 ">
         <button
           className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full"
-          onClick={() => handleQuitGame("You win, Your opponent has quit the game")}
+          onClick={() => handleQuitGame("You win, Your opponent has quit the game", "quit")}
         >
           Quit
         </button>
         <button
           className="px-2 py-1 text-white bg-red-500  hover:bg-red-600 rounded-lg button-hover w-full"
-          onClick={() => handleQuitGame("You win, Your opponent has resigned the game")}
+          onClick={() => handleQuitGame("You win, Your opponent has resigned the game", "resigned")}
         >
           Resign
         </button>

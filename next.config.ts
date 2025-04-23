@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 const getBaseURL = () => {
   switch (process.env.NODE_ENV) {
     case "development":
-      return "http://localhost:9000/api"; // Dev environment API
+      return "http://localhost:9000/"; // Dev environment API
     case "production":
       return "https://ghfjdtetywyerriujncxfdsdfssz.site/"; // Production API
     default:
