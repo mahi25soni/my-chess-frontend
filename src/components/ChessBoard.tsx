@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 type Props = {
   socket: Socket;
   setTheGameHistory: (history: string[]) => void;
+  setCurrentGame: (game: any) => void;
   currentUser: {
     id: string;
     color: string;
@@ -22,6 +23,8 @@ type Props = {
     email: string;
   };
 };
+
+type MatchEndReason = "resigned" | "quit" | "back";
 
 const ChessBoard = (props: Props) => {
   const [game, setGame] = useState(new Chess());
@@ -54,6 +57,7 @@ const ChessBoard = (props: Props) => {
 
   useEffect(() => {
     props.setTheGameHistory(game.history());
+    props.setCurrentGame(game);
   }, [game]);
 
   const matchRestart = () => {
@@ -238,8 +242,15 @@ const ChessBoard = (props: Props) => {
     setOptionSquare(newSquares);
   };
 
-  const handleQuitGame = (message: string) => {
-    props.socket.emit("quit-event", message);
+  const handleQuitGame = (message: string, reason: MatchEndReason) => {
+    props.socket.emit("quit-event", {
+      message: message,
+      reason: reason,
+      game: {
+        fen: game.fen(),
+        pgn: game.pgn(),
+      },
+    });
     router.push("/");
   };
 
@@ -298,7 +309,7 @@ const MatchEndModal = ({
   newMatchWithSameSocket,
 }: {
   winner: string;
-  handleQuitGame: (string) => void;
+  handleQuitGame: (string, MatchEndReason) => void;
   newMatchWithSameSocket: () => void;
 }) => {
   return (
@@ -311,7 +322,7 @@ const MatchEndModal = ({
           <button
             className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
                transition-all duration-200 hover:bg-blue-700 active:scale-95"
-            onClick={() => handleQuitGame("Nothing")}
+            onClick={() => handleQuitGame("Nothing", "back")}
           >
             Back to Home
           </button>

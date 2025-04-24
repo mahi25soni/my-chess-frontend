@@ -11,6 +11,8 @@ import io from "socket.io-client";
 
 type Props = {};
 
+type MatchEndReason = "resigned" | "quit" | "back";
+
 export default function Page({}: Props) {
   const [socket, setSocket] = useState<any>(null);
   const [player, setPlayer] = useState({
@@ -33,6 +35,7 @@ export default function Page({}: Props) {
   const gameTypeId = searchParam.get("gameTypeId");
   const [theGameHistory, setTheGameHistory] = useState<string[]>([]);
   const [matchEndMessage, setMatchEndMessage] = useState<string | null>(null);
+  const [currentGame, setCurrentGame] = useState<any>(null);
 
   useEffect(() => {
     const socket = io(process.env.API_BASE_URL, {
@@ -83,8 +86,16 @@ export default function Page({}: Props) {
     };
   }, []);
 
-  const handleQuitGame = (message: string) => {
-    socket.emit("quit-event", message);
+  const handleQuitGame = (message: string, reason: MatchEndReason) => {
+    socket.emit("quit-event", {
+      message: message,
+      reason: reason,
+      game: {
+        fen: currentGame.fen(),
+        pgn: currentGame.pgn(),
+        history: theGameHistory,
+      },
+    });
     router.push("/");
   };
 
@@ -103,6 +114,7 @@ export default function Page({}: Props) {
                   <ChessBoard
                     socket={socket}
                     setTheGameHistory={setTheGameHistory}
+                    setCurrentGame={setCurrentGame}
                     currentUser={player}
                     opponent={opponent}
                   />
@@ -133,7 +145,7 @@ const OpponentQuits = ({
   newMatchWithSameSocket,
   message,
 }: {
-  handleQuitGame: (string) => void;
+  handleQuitGame: (string, MatchEndReason) => void;
   newMatchWithSameSocket: () => void;
   message: string;
 }) => {
@@ -147,7 +159,7 @@ const OpponentQuits = ({
           <button
             className="mt-4 py-2 px-4 w-full text-white bg-blue-600 rounded-lg font-semibold text-lg 
                transition-all duration-200 hover:bg-blue-700 active:scale-95"
-            onClick={() => handleQuitGame("Nothing")}
+            onClick={() => handleQuitGame("Nothing", "back")}
           >
             Back to Home
           </button>
