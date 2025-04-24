@@ -18,10 +18,10 @@ function StatCard({ title, value }: StatCardProps) {
 export default function PlayerStats({ stats }: { stats: any }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:py-8 py:2">
+      <StatCard title="Total Games" value={stats.totalGames || 387} />
       <StatCard title="Total Wins" value={stats.wins || 247} />
-      <StatCard title="Rating" value={stats.rating || 1850} />
+      <StatCard title="Total Losses" value={stats.losses || 140} />
       <StatCard title="Win Rate" value={`${stats.winRate || 64}%`} />
-      <StatCard title="Accuracy" value={`${stats.accuracy || 86}%`} />
     </div>
   );
 }
